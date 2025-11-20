@@ -1,5 +1,15 @@
 // Serverless function for managing feed info
-const { getFeedInfo, updateFeedInfo } = require('./data-store');
+
+// Global data store (shared across requests in same function instance)
+global.feedData = global.feedData || {
+  feedInfo: {
+    title: "VIB News Feed - Test",
+    link: "",
+    description: "RSS Feed for testing VIB sentiment analysis flow",
+    language: "vi"
+  },
+  items: []
+};
 
 module.exports = async (req, res) => {
   // Enable CORS
@@ -17,14 +27,16 @@ module.exports = async (req, res) => {
   try {
     // GET - Get feed info
     if (req.method === 'GET') {
-      const feedInfo = getFeedInfo();
-      return res.status(200).json(feedInfo);
+      return res.status(200).json(global.feedData.feedInfo);
     }
 
     // PUT - Update feed info
     if (req.method === 'PUT') {
-      const updatedInfo = updateFeedInfo(req.body);
-      return res.status(200).json({ success: true, feedInfo: updatedInfo });
+      global.feedData.feedInfo = {
+        ...global.feedData.feedInfo,
+        ...req.body
+      };
+      return res.status(200).json({ success: true, feedInfo: global.feedData.feedInfo });
     }
 
     // Method not allowed
