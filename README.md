@@ -27,6 +27,8 @@ npm install
 
 ## ▶️ Chạy ứng dụng
 
+### Chạy Local
+
 ```bash
 npm start
 ```
@@ -34,6 +36,45 @@ npm start
 Website sẽ chạy tại: **http://localhost:3000**
 
 RSS Feed URL: **http://localhost:3000/feed.xml**
+
+### 🚀 Deploy lên Vercel (Recommended)
+
+Để sử dụng công khai và tích hợp với Power Automate, nên deploy lên Vercel:
+
+#### Bước 1: Cài đặt Vercel CLI (tùy chọn)
+```bash
+npm i -g vercel
+```
+
+#### Bước 2: Deploy
+**Cách 1: Sử dụng Vercel Dashboard (Dễ nhất)**
+1. Truy cập [vercel.com](https://vercel.com)
+2. Login bằng GitHub
+3. Click "New Project"
+4. Import repository `rss_gen`
+5. Click "Deploy" (không cần config gì thêm)
+6. Đợi vài giây để deploy xong
+7. Copy URL từ Vercel (VD: `https://your-project.vercel.app`)
+8. Sử dụng URL này trong Power Automate: `https://your-project.vercel.app/feed.xml`
+
+**Cách 2: Sử dụng Vercel CLI**
+```bash
+vercel
+```
+
+Follow các bước trong CLI, sau đó:
+```bash
+vercel --prod
+```
+
+#### ⚠️ Lưu ý quan trọng về Vercel deployment:
+- **Data lưu trong memory**: Trên Vercel, data được lưu trong memory của serverless function. Data sẽ tồn tại trong session nhưng có thể reset khi:
+  - Function cold start (sau một thời gian không hoạt động)
+  - Khi deploy version mới
+  - Khi Vercel scale functions
+- **Phù hợp cho testing**: Điều này hoàn toàn OK cho mục đích test Power Automate flow
+- **Initial data**: Mỗi lần reset sẽ có 2 tin mẫu sẵn để test ngay
+- **Production use**: Nếu cần lưu data vĩnh viễn, có thể tích hợp database (MongoDB, PostgreSQL, etc.)
 
 ## 📖 Hướng dẫn sử dụng
 
@@ -69,13 +110,18 @@ Mở trình duyệt và truy cập: http://localhost:3000
 
 ```
 rss_gen/
-├── server.js           # Express server & API endpoints
+├── server.js           # Express server (cho local development)
+├── vercel.json         # Vercel configuration
 ├── package.json        # Dependencies
+├── api/               # Serverless functions (cho Vercel)
+│   ├── data-store.js  # In-memory data storage
+│   ├── items.js       # API endpoint: GET/POST/DELETE items
+│   ├── feed.js        # API endpoint: Generate RSS feed
+│   └── feed-info.js   # API endpoint: Manage feed info
 ├── public/            # Frontend files
 │   ├── index.html     # Giao diện chính
 │   ├── style.css      # Styles với màu VIB
 │   └── app.js         # Frontend logic
-├── data.json          # Database (tự động tạo khi chạy)
 └── README.md          # Tài liệu
 ```
 

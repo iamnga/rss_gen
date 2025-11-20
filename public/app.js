@@ -123,7 +123,7 @@ async function deleteNews(id) {
     }
 
     try {
-        const response = await fetch(`${API_BASE}/api/items/${id}`, {
+        const response = await fetch(`${API_BASE}/api/items?id=${id}`, {
             method: 'DELETE'
         });
 
