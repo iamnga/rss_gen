@@ -1,5 +1,7 @@
 {
   "rewrites": [
-    { "source": "/feed.xml", "destination": "/api/feed" }
+    { "source": "/feed.xml", "destination": "/api/feed" },
+    { "source": "/", "destination": "/public/index.html" },
+    { "source": "/(.*)", "destination": "/public/$1" }
   ]
 }
